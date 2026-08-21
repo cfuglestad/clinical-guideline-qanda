@@ -10,11 +10,11 @@ from src.ingestion.chunker import chunk_pages
 from src.ingestion.loader import load_directory
 from src.retrieval.store import GuidelineStore
 
-# Inject Streamlit secrets into environment for langchain-google-genai
-if "GOOGLE_API_KEY" not in os.environ:
-    key = st.secrets.get("GOOGLE_API_KEY", "")
+# Inject Streamlit secrets into environment for langchain-openai
+if "OPENAI_API_KEY" not in os.environ:
+    key = st.secrets.get("OPENAI_API_KEY", "")
     if key:
-        os.environ["GOOGLE_API_KEY"] = key
+        os.environ["OPENAI_API_KEY"] = key
 
 PERSIST_DIR = "chroma_db"
 DATA_DIRS = ["data/sample", "data/raw"]
