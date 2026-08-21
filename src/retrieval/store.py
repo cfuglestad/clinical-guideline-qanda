@@ -1,6 +1,5 @@
 """ChromaDB vector store for clinical guideline chunks."""
 
-from pathlib import Path
 from typing import Protocol
 
 import chromadb
