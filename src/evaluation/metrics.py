@@ -5,7 +5,7 @@ for a given question, using labeled Q&A pairs as ground truth.
 """
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 

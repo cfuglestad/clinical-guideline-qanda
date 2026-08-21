@@ -7,7 +7,6 @@ Usage:
     python scripts/download_guidelines.py
 """
 
-import urllib.request
 from pathlib import Path
 
 # Each entry: (filename, URL, description)
