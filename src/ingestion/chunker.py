@@ -11,10 +11,11 @@ from dataclasses import dataclass, field
 from src.ingestion.loader import DocumentPage
 
 # Patterns that indicate a new section in clinical guidelines
+_CLINICAL_KEYWORDS = r"^(?:Recommendation|Summary|Background|Methods|Evidence|Discussion)\b"
 _HEADING_PATTERNS = [
-    re.compile(r"^[A-Z][A-Z ]{4,}$", re.MULTILINE),  # ALL CAPS headings
-    re.compile(r"^\d+\.\s+[A-Z]", re.MULTILINE),  # Numbered headings (1. Introduction)
-    re.compile(r"^(?:Recommendation|Summary|Background|Methods|Evidence|Discussion)\b", re.MULTILINE | re.IGNORECASE),
+    re.compile(r"^[A-Z][A-Z ]{4,}$", re.MULTILINE),
+    re.compile(r"^\d+\.\s+[A-Z]", re.MULTILINE),
+    re.compile(_CLINICAL_KEYWORDS, re.MULTILINE | re.IGNORECASE),
 ]
 
 
@@ -36,7 +37,9 @@ class ChunkerConfig:
     max_chunk_tokens: int = 512
     min_chunk_tokens: int = 50
     overlap_sentences: int = 1
-    heading_patterns: list[re.Pattern[str]] = field(default_factory=lambda: list(_HEADING_PATTERNS))
+    heading_patterns: list[re.Pattern[str]] = field(
+        default_factory=lambda: list(_HEADING_PATTERNS)
+    )
 
 
 def _estimate_tokens(text: str) -> int:
@@ -138,10 +141,11 @@ def chunk_pages(pages: list[DocumentPage], config: ChunkerConfig | None = None) 
                 current_sentences.append(sentence)
                 current_tokens += sent_tokens
 
-            if current_sentences and _estimate_tokens(" ".join(current_sentences)) >= config.min_chunk_tokens:
+            remaining_text = " ".join(current_sentences)
+            if current_sentences and _estimate_tokens(remaining_text) >= config.min_chunk_tokens:
                 chunks.append(
                     Chunk(
-                        text=" ".join(current_sentences),
+                        text=remaining_text,
                         heading=heading,
                         source_file=source_file,
                         page_numbers=tuple(p.page_number for p in pages),

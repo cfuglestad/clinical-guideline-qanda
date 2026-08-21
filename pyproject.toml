@@ -61,6 +61,19 @@ select = ["E", "F", "I", "B", "UP"]
 python_version = "3.11"
 strict = true
 files = ["src"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+  "chromadb.*",
+  "langchain.*",
+  "langchain_openai.*",
+  "langchain_community.*",
+  "langgraph.*",
+  "sentence_transformers.*",
+  "streamlit.*",
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-config --strict-markers"
