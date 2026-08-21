@@ -106,7 +106,7 @@ class GuidelineStore:
         metadatas = results.get("metadatas", [[]])[0]
         distances = results.get("distances", [[]])[0]
 
-        for doc, meta, dist in zip(documents, metadatas, distances):
+        for doc, meta, dist in zip(documents, metadatas, distances, strict=False):
             retrieved.append(
                 {
                     "text": doc,

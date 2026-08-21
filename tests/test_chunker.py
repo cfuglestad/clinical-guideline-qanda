@@ -1,6 +1,6 @@
 """Tests for section-aware chunking logic."""
 
-from src.ingestion.chunker import Chunk, ChunkerConfig, chunk_pages
+from src.ingestion.chunker import ChunkerConfig, chunk_pages
 from src.ingestion.loader import DocumentPage
 
 
@@ -44,7 +44,8 @@ def test_multiple_headings_produce_multiple_chunks() -> None:
 
 def test_large_section_splits_on_sentence_boundaries() -> None:
     # Create a section larger than max_chunk_tokens
-    long_content = "EVIDENCE REVIEW\n" + "This is a complete sentence about clinical evidence. " * 200
+    sentence = "This is a complete sentence about clinical evidence. "
+    long_content = "EVIDENCE REVIEW\n" + sentence * 200
     pages = _make_pages(long_content)
     config = ChunkerConfig(max_chunk_tokens=100)
     chunks = chunk_pages(pages, config)
