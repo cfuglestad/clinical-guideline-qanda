@@ -110,7 +110,8 @@ def evaluate_retrieval(
             str(r.get("heading", "")) for r in retrieved[:k]
         )
         retrieved_scores = tuple(
-            float(r.get("score", 0.0)) for r in retrieved[:k]
+            float(r.get("score", 0.0) or 0.0)  # type: ignore[arg-type]
+            for r in retrieved[:k]
         )
 
         # Count hits: retrieved chunks whose heading matches a relevant section
