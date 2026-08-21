@@ -12,9 +12,15 @@ from src.retrieval.store import GuidelineStore
 
 # Inject Streamlit secrets into environment for langchain-openai
 if "OPENAI_API_KEY" not in os.environ:
-    key = st.secrets.get("OPENAI_API_KEY", "")
-    if key:
+    try:
+        key = st.secrets["OPENAI_API_KEY"]
         os.environ["OPENAI_API_KEY"] = key
+    except (KeyError, FileNotFoundError):
+        st.error(
+            "Missing `OPENAI_API_KEY`. Add it in Streamlit Cloud: "
+            "App settings → Secrets → `OPENAI_API_KEY = \"sk-...\"`"
+        )
+        st.stop()
 
 PERSIST_DIR = "chroma_db"
 DATA_DIRS = ["data/sample", "data/raw"]
