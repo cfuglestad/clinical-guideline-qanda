@@ -5,6 +5,7 @@ for a given question, using labeled Q&A pairs as ground truth.
 """
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -87,7 +88,7 @@ def _heading_matches(
 
 def evaluate_retrieval(
     qa_pairs: list[QAPair],
-    retrieval_fn: "callable",  # type: ignore[valid-type]
+    retrieval_fn: Callable[[str], list[dict[str, object]]],
     k: int = 5,
 ) -> EvaluationReport:
     """Evaluate retrieval quality against labeled Q&A pairs.
