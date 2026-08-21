@@ -48,13 +48,24 @@ def _estimate_tokens(text: str) -> int:
 
 
 def _find_headings(text: str, patterns: list[re.Pattern[str]]) -> list[tuple[int, str]]:
-    """Find all heading positions and their text."""
+    """Find all heading positions and their text.
+
+    When multiple patterns match at the same position, keeps only the
+    longest match to avoid duplicate section splits.
+    """
     headings: list[tuple[int, str]] = []
     for pattern in patterns:
         for match in pattern.finditer(text):
             headings.append((match.start(), match.group().strip()))
-    headings.sort(key=lambda h: h[0])
-    return headings
+    headings.sort(key=lambda h: (h[0], -len(h[1])))
+    # Deduplicate: keep only the longest heading at each position
+    seen_positions: set[int] = set()
+    unique: list[tuple[int, str]] = []
+    for pos, heading_text in headings:
+        if pos not in seen_positions:
+            seen_positions.add(pos)
+            unique.append((pos, heading_text))
+    return unique
 
 
 def chunk_pages(pages: list[DocumentPage], config: ChunkerConfig | None = None) -> list[Chunk]:
