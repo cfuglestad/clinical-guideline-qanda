@@ -9,12 +9,12 @@ The agent follows a retrieve-then-generate pattern:
 from dataclasses import dataclass
 from typing import TypedDict
 
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from langgraph.graph import END, StateGraph
 
 from src.retrieval.store import GuidelineStore
 
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_MODEL = "llama-3.1-8b-instant"
 ABSTENTION_THRESHOLD = 0.4  # Minimum top-result similarity to proceed
 
 
@@ -39,7 +39,7 @@ class QAAgent:
     abstention_threshold: float = ABSTENTION_THRESHOLD
 
     def __post_init__(self) -> None:
-        self._llm = ChatOpenAI(model=self.model_name, temperature=0)
+        self._llm = ChatGroq(model=self.model_name, temperature=0)  # type: ignore[call-arg]
         self._graph = self._build_graph()
 
     def _build_graph(self) -> StateGraph:  # type: ignore[type-arg]

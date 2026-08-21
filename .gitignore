@@ -26,6 +26,9 @@ chroma_db/
 # Data (raw PDFs can be large)
 data/raw/*.pdf
 
+# Streamlit secrets (keep .example, ignore actual)
+.streamlit/secrets.toml
+
 # IDE
 .vscode/
 .idea/

@@ -1,6 +1,9 @@
-"""ChromaDB vector store for clinical guideline chunks."""
+"""ChromaDB vector store for clinical guideline chunks.
 
-from typing import Protocol
+Uses ChromaDB's built-in ONNX embedding (all-MiniLM-L6-v2). No PyTorch
+or sentence-transformers required. Documents are embedded automatically
+when added via `documents=` and queried via `query_texts=`.
+"""
 
 import chromadb
 from chromadb.config import Settings
@@ -11,28 +14,6 @@ DEFAULT_COLLECTION = "clinical_guidelines"
 DEFAULT_PERSIST_DIR = "chroma_db"
 
 
-class Embedder(Protocol):
-    """Protocol for embedding text into vectors."""
-
-    def encode(self, texts: list[str]) -> list[list[float]]:
-        """Encode a batch of texts into embeddings."""
-        ...
-
-
-class SentenceTransformerEmbedder:
-    """Local sentence-transformer embedding model."""
-
-    def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2") -> None:
-        from sentence_transformers import SentenceTransformer
-
-        self._model = SentenceTransformer(model_name)
-
-    def encode(self, texts: list[str]) -> list[list[float]]:
-        """Encode texts into normalized embeddings."""
-        embeddings = self._model.encode(texts, normalize_embeddings=True)
-        return [row.tolist() for row in embeddings]
-
-
 class GuidelineStore:
     """Manages chunk storage and retrieval via ChromaDB."""
 
@@ -40,9 +21,7 @@ class GuidelineStore:
         self,
         persist_dir: str = DEFAULT_PERSIST_DIR,
         collection_name: str = DEFAULT_COLLECTION,
-        embedder: Embedder | None = None,
     ) -> None:
-        self._embedder = embedder or SentenceTransformerEmbedder()
         self._client = chromadb.PersistentClient(
             path=persist_dir,
             settings=Settings(anonymized_telemetry=False),
@@ -58,13 +37,11 @@ class GuidelineStore:
         return self._collection.count()
 
     def add_chunks(self, chunks: list[Chunk]) -> None:
-        """Embed and store chunks with metadata."""
+        """Store chunks with metadata. ChromaDB handles embedding."""
         if not chunks:
             return
 
         texts = [c.text for c in chunks]
-        embeddings = self._embedder.encode(texts)
-
         ids = [f"{c.source_file}::{c.chunk_index}" for c in chunks]
         metadatas = [
             {
@@ -78,7 +55,6 @@ class GuidelineStore:
 
         self._collection.add(
             ids=ids,
-            embeddings=embeddings,  # type: ignore[arg-type]
             documents=texts,
             metadatas=metadatas,  # type: ignore[arg-type]
         )
@@ -93,10 +69,8 @@ class GuidelineStore:
         Returns:
             List of dicts with keys: text, heading, source_file, score, page_numbers.
         """
-        query_embedding = self._embedder.encode([question])
-
         results = self._collection.query(
-            query_embeddings=query_embedding,  # type: ignore[arg-type]
+            query_texts=[question],
             n_results=n_results,
             include=["documents", "metadatas", "distances"],  # type: ignore[list-item]
         )

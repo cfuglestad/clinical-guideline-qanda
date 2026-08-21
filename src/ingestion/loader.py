@@ -1,4 +1,4 @@
-"""Load clinical guideline PDFs and extract raw text with page metadata."""
+"""Load clinical guidelines (PDF or TXT) and extract text with metadata."""
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -43,16 +43,46 @@ def load_pdf(path: Path) -> list[DocumentPage]:
     return pages
 
 
-def load_directory(directory: Path) -> list[DocumentPage]:
-    """Load all PDFs from a directory.
+def load_txt(path: Path) -> list[DocumentPage]:
+    """Load a plain text file as a single page.
 
     Args:
-        directory: Path to directory containing PDF files.
+        path: Path to the text file.
 
     Returns:
-        All pages from all PDFs, sorted by filename then page number.
+        List containing one DocumentPage with the full text.
+    """
+    text = path.read_text(encoding="utf-8")
+    return [
+        DocumentPage(
+            text=text.strip(),
+            page_number=1,
+            source_file=path.name,
+            total_pages=1,
+        )
+    ]
+
+
+def load_file(path: Path) -> list[DocumentPage]:
+    """Load a single file (PDF or TXT) based on extension."""
+    if path.suffix.lower() == ".pdf":
+        return load_pdf(path)
+    if path.suffix.lower() == ".txt":
+        return load_txt(path)
+    raise ValueError(f"Unsupported file type: {path.suffix}")
+
+
+def load_directory(directory: Path) -> list[DocumentPage]:
+    """Load all supported files (PDF, TXT) from a directory.
+
+    Args:
+        directory: Path to directory containing guideline files.
+
+    Returns:
+        All pages from all files, sorted by filename then page number.
     """
     all_pages: list[DocumentPage] = []
-    for pdf_path in sorted(directory.glob("*.pdf")):
-        all_pages.extend(load_pdf(pdf_path))
+    for file_path in sorted(directory.iterdir()):
+        if file_path.suffix.lower() in (".pdf", ".txt"):
+            all_pages.extend(load_file(file_path))
     return all_pages

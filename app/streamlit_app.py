@@ -1,9 +1,23 @@
 """Streamlit demo interface for Clinical Guideline Q&A."""
 
+import os
+from pathlib import Path
+
 import streamlit as st
 
 from src.generation.agent import QAAgent
+from src.ingestion.chunker import chunk_pages
+from src.ingestion.loader import load_directory
 from src.retrieval.store import GuidelineStore
+
+# Inject Streamlit secrets into environment for langchain-groq
+if "GROQ_API_KEY" not in os.environ:
+    key = st.secrets.get("GROQ_API_KEY", "")
+    if key:
+        os.environ["GROQ_API_KEY"] = key
+
+PERSIST_DIR = "chroma_db"
+DATA_DIRS = ["data/sample", "data/raw"]
 
 st.set_page_config(
     page_title="Clinical Guideline Q&A",
@@ -20,12 +34,22 @@ st.markdown(
 
 @st.cache_resource
 def load_agent() -> QAAgent:
-    """Initialize the vector store and QA agent."""
-    store = GuidelineStore()
+    """Initialize the store, auto-ingest if empty, and return the agent."""
+    store = GuidelineStore(persist_dir=PERSIST_DIR)
+
     if store.count == 0:
-        st.warning(
-            "No guidelines loaded. Run `python -m src.ingestion.ingest` first."
-        )
+        pages = []
+        for data_dir in DATA_DIRS:
+            d = Path(data_dir)
+            if d.exists():
+                pages.extend(load_directory(d))
+
+        if pages:
+            chunks = chunk_pages(pages)
+            store.add_chunks(chunks)
+        else:
+            st.warning("No guideline files found in data/sample/ or data/raw/.")
+
     return QAAgent(store=store)
 
 
