@@ -78,9 +78,9 @@ class GuidelineStore:
 
         self._collection.add(
             ids=ids,
-            embeddings=embeddings,
+            embeddings=embeddings,  # type: ignore[arg-type]
             documents=texts,
-            metadatas=metadatas,
+            metadatas=metadatas,  # type: ignore[arg-type]
         )
 
     def query(self, question: str, n_results: int = 5) -> list[dict[str, object]]:
@@ -96,24 +96,24 @@ class GuidelineStore:
         query_embedding = self._embedder.encode([question])
 
         results = self._collection.query(
-            query_embeddings=query_embedding,
+            query_embeddings=query_embedding,  # type: ignore[arg-type]
             n_results=n_results,
-            include=["documents", "metadatas", "distances"],
+            include=["documents", "metadatas", "distances"],  # type: ignore[list-item]
         )
 
         retrieved: list[dict[str, object]] = []
-        documents = results.get("documents", [[]])[0]
-        metadatas = results.get("metadatas", [[]])[0]
-        distances = results.get("distances", [[]])[0]
+        documents = (results.get("documents") or [[]])[0]
+        metadatas = (results.get("metadatas") or [[]])[0]
+        distances = (results.get("distances") or [[]])[0]
 
         for doc, meta, dist in zip(documents, metadatas, distances, strict=False):
             retrieved.append(
                 {
                     "text": doc,
-                    "heading": meta["heading"],  # type: ignore[index]
-                    "source_file": meta["source_file"],  # type: ignore[index]
-                    "page_numbers": meta["page_numbers"],  # type: ignore[index]
-                    "score": 1.0 - dist,  # cosine distance → similarity
+                    "heading": meta["heading"],
+                    "source_file": meta["source_file"],
+                    "page_numbers": meta["page_numbers"],
+                    "score": 1.0 - dist,  # cosine distance -> similarity
                 }
             )
 

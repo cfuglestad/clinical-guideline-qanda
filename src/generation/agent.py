@@ -42,7 +42,7 @@ class QAAgent:
         self._llm = ChatOpenAI(model=self.model_name, temperature=0)
         self._graph = self._build_graph()
 
-    def _build_graph(self) -> StateGraph:
+    def _build_graph(self) -> StateGraph:  # type: ignore[type-arg]
         """Construct the retrieval-generation graph."""
         graph = StateGraph(AgentState)
 
