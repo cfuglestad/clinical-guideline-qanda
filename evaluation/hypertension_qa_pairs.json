@@ -1,0 +1,91 @@
+{
+  "dataset_name": "hypertension-screening-qa-v1",
+  "source_document": "uspstf-hypertension-screening.pdf",
+  "description": "Labeled Q&A pairs for retrieval evaluation against the USPSTF hypertension screening guideline.",
+  "pairs": [
+    {
+      "id": "htn-001",
+      "question": "What grade does the USPSTF assign to hypertension screening?",
+      "expected_answer": "Grade A recommendation.",
+      "relevant_sections": ["SUMMARY OF RECOMMENDATION"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "htn-002",
+      "question": "What blood pressure thresholds define hypertension according to this guideline?",
+      "expected_answer": "Persistent systolic blood pressure at or above 130 mm Hg or diastolic blood pressure at or above 80 mm Hg, based on the 2017 ACC/AHA guideline.",
+      "relevant_sections": ["SUMMARY OF RECOMMENDATION"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "htn-003",
+      "question": "How should elevated office blood pressure be confirmed before starting treatment?",
+      "expected_answer": "Using out-of-office measurements, preferably ambulatory blood pressure monitoring (ABPM) or home blood pressure monitoring (HBPM). A minimum of 12 to 14 measurements over several days is recommended for HBPM.",
+      "relevant_sections": ["SUMMARY OF RECOMMENDATION", "4. Confirmatory Blood Pressure Measurement"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "htn-004",
+      "question": "What is the recommended screening interval for adults aged 40 and older?",
+      "expected_answer": "Annual screening for adults aged 40 years or older and for adults at increased risk.",
+      "relevant_sections": ["3. Screening Intervals"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "htn-005",
+      "question": "What are the first-line pharmacologic agents for hypertension treatment?",
+      "expected_answer": "Thiazide diuretics, ACE inhibitors, angiotensin II receptor blockers (ARBs), and calcium channel blockers.",
+      "relevant_sections": ["5. Treatment Approaches"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "htn-006",
+      "question": "What is the relative risk reduction for stroke with hypertension treatment?",
+      "expected_answer": "35-40 percent relative risk reduction for stroke.",
+      "relevant_sections": ["RATIONALE"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "htn-007",
+      "question": "How many deaths annually in the US are attributed to uncontrolled hypertension?",
+      "expected_answer": "Approximately 500,000 deaths annually.",
+      "relevant_sections": ["RATIONALE"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "htn-008",
+      "question": "What is the sensitivity and specificity of office blood pressure measurement for detecting true hypertension?",
+      "expected_answer": "Moderate sensitivity (approximately 75 percent) and specificity (approximately 75 percent) when compared with ambulatory monitoring.",
+      "relevant_sections": ["EVIDENCE REVIEW"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "htn-009",
+      "question": "What harms are associated with antihypertensive treatment?",
+      "expected_answer": "Hypotension (RR 1.7), syncope (RR 1.3), acute kidney injury (RR 1.2), and electrolyte abnormalities (RR 1.9). These are generally manageable with monitoring and dose adjustment.",
+      "relevant_sections": ["RATIONALE", "EVIDENCE REVIEW"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "htn-010",
+      "question": "What research gaps does the USPSTF identify?",
+      "expected_answer": "Optimal screening interval for different risk groups, comparative effectiveness of confirmatory strategies in diverse populations, benefits/harms of screening in young adults 18-39, and the role of cuffless blood pressure monitors.",
+      "relevant_sections": ["DISCUSSION"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "htn-011",
+      "question": "Does this recommendation apply to pregnant persons?",
+      "expected_answer": "No. The recommendation does not apply to pregnant persons, for whom separate screening recommendations exist.",
+      "relevant_sections": ["SUMMARY OF RECOMMENDATION"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "htn-012",
+      "question": "What percentage of US adults have hypertension?",
+      "expected_answer": "Approximately 45 percent of US adults have hypertension.",
+      "relevant_sections": ["SUMMARY OF RECOMMENDATION"],
+      "difficulty": "easy"
+    }
+  ]
+}

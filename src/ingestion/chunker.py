@@ -14,7 +14,7 @@ from src.ingestion.loader import DocumentPage
 _CLINICAL_KEYWORDS = r"^(?:Recommendation|Summary|Background|Methods|Evidence|Discussion)\b"
 _HEADING_PATTERNS = [
     re.compile(r"^[A-Z][A-Z ]{4,}$", re.MULTILINE),
-    re.compile(r"^\d+\.\s+[A-Z]", re.MULTILINE),
+    re.compile(r"^\d+\.\s+[A-Z][^\n]*", re.MULTILINE),
     re.compile(_CLINICAL_KEYWORDS, re.MULTILINE | re.IGNORECASE),
 ]
 
